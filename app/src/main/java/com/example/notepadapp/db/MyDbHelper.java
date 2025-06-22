@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -49,8 +50,8 @@ public class MyDbHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()){
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             String content = cursor.getString(cursor.getColumnIndex("content"));
-            String item = cursor.getString(cursor.getColumnIndex("time"));
-            Notepad notepad=new Notepad(id,content,item);
+            String time = cursor.getString(cursor.getColumnIndex("time"));
+            Notepad notepad=new Notepad(id,content,time);
             notepads.add(notepad);
         }
 
@@ -62,5 +63,26 @@ public class MyDbHelper extends SQLiteOpenHelper {
         String sql = "delete from notepad where id=?";
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(sql,new Object[]{notepad.getId()});
+    }
+
+    // 根据ID查询记录
+    @SuppressLint("Range")
+    public Notepad findById(int id){
+//        Log.d("TAG", String.valueOf(id));
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "select * from notepad where id = ?";
+        Cursor cursor = db.rawQuery(sql,new String[]{String.valueOf(id)});
+        if(cursor.moveToNext()){
+            String content = cursor.getString(cursor.getColumnIndex("content"));
+            String time = cursor.getString(cursor.getColumnIndex("time"));
+            return new Notepad(id,content,time);
+        }
+        return null;
+    }
+
+    public void update(Notepad notepad){
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "update notepad set content = ?,time=? where id = ?";
+        db.execSQL(sql,new Object[]{notepad.getContent(),notepad.getTime(),notepad.getId()});
     }
 }

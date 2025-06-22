@@ -1,6 +1,7 @@
 package com.example.notepadapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -104,6 +105,17 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onLongClick(View view) {
                     showDeleteDialog(notepad);
                     return false;
+                }
+            });
+
+            // 单击修改记录
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MainActivity activity=(MainActivity)view.getContext();
+                    Intent intent = new Intent(activity, EditActivity.class);
+                    intent.putExtra("notepadId",notepad.getId());
+                    activity.startActivityForResult(intent,100);
                 }
             });
         }
